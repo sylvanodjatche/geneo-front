@@ -1,7 +1,10 @@
+
+// src/pages/Home.jsx
 import { useState } from 'react';
 import SequenceInput from '../components/SequenceInput';
 import ResultsPanel from '../components/ResultsPanel';
 import ExportPanel from '../components/ExportPanel';
+import { predict } from '../services/api';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
 function Home() {
@@ -32,17 +35,10 @@ function Home() {
     setError(null);
     setCurrentMode('single');
     try {
-      const mockResults = {
-        go_terms: [
-          { id: "GO:0003674", name: "molecular_function", namespace: "MF", score: 0.92 },
-          { id: "GO:0003824", name: "catalytic activity", namespace: "MF", score: 0.87 },
-          { id: "GO:0008150", name: "biological_process", namespace: "BP", score: 0.65 }
-        ]
-      };
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setResults(mockResults);
+      const data = await predict(sequence, threshold);
+      setResults(data);
       setAllResults([]);
-      saveToHistory(sequence, threshold, mockResults, 'single');
+      saveToHistory(sequence, threshold, data, 'single');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -58,16 +54,10 @@ function Home() {
       const resultsArray = [];
       for (let i = 0; i < sequences.length; i++) {
         const seq = sequences[i];
-        const mockResults = {
-          go_terms: [
-            { id: "GO:0003674", name: "molecular_function", namespace: "MF", score: Math.max(0, 0.92 - i * 0.05) },
-            { id: "GO:0003824", name: "catalytic activity", namespace: "MF", score: Math.max(0, 0.87 - i * 0.05) },
-            { id: "GO:0008150", name: "biological_process", namespace: "BP", score: Math.max(0, 0.65 - i * 0.05) }
-          ]
-        };
+        const data = await predict(seq.sequence, threshold);
+        resultsArray.push({ id: seq.id, results: data });
+        saveToHistory(seq.sequence, threshold, data, 'multi', seq.id);
         await new Promise(resolve => setTimeout(resolve, 200));
-        resultsArray.push({ id: seq.id, results: mockResults });
-        saveToHistory(seq.sequence, threshold, mockResults, 'multi', seq.id);
       }
       setAllResults(resultsArray);
       if (resultsArray.length > 0) {
