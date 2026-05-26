@@ -1,5 +1,4 @@
 // src/services/api.js
-// Connexion au backend réel (Hugging Face Space)
 const API_BASE_URL = 'https://sylvanod-geneo-inference.hf.space';
 
 export async function predict(sequence, threshold) {

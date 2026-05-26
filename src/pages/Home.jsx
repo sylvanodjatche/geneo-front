@@ -1,4 +1,3 @@
-
 // src/pages/Home.jsx
 import { useState } from 'react';
 import SequenceInput from '../components/SequenceInput';
