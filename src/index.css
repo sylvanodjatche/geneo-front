@@ -6,7 +6,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Design tokens ──────────────────────────────────────────── 
+/* ── Design tokens ────────────────────────────────────────────  */
 :root {
   --bg-void:      #05070f;
   --bg-deep:      #090d1a;
@@ -37,44 +37,9 @@
   --glow-teal:   0 0 40px rgba(6, 182, 212, 0.2);
   --glow-sm:     0 0 15px rgba(124, 58, 237, 0.15);
 }
-*/
-/* Mode clair (par défaut) */
-/* Mode clair — palette douce et moderne */
-:root {
-  --bg-void:      #f9fafb;      /* fond global très clair */
-  --bg-deep:      #f3f4f6;      /* fonds secondaires */
-  --bg-surface:   #ffffff;      /* cartes, inputs */
-  --bg-elevated:  #f1f5f9;      /* survols, éléments en relief */
 
-  --border:       #e2e8f0;      /* bordures discrètes */
-  --border-glow:  #c084fc;      /* liseré au focus / survol (violet clair) */
 
-  --accent-1:     #7c3aed;      /* violet principal */
-  --accent-2:     #a855f7;      /* violet secondaire */
-  --accent-teal:  #0d9488;      /* teal pour les accents (plus lisible que le cyan) */
 
-  --text-primary: #1e293b;      /* titres, texte important */
-  --text-secondary: #334155;    /* texte standard */
-  --text-muted:   #64748b;      /* textes secondaires, placeholders */
-  --text-accent:  #6d28d9;      /* liens, valeurs mises en avant */
-}
-
-/* Mode sombre (quand .dark est présent sur <html>) */
-.dark {
-  --bg-void:      #05070f;
-  --bg-deep:      #090d1a;
-  --bg-surface:   #0e1426;
-  --bg-elevated:  #131c35;
-  --border:       rgba(99, 130, 255, 0.12);
-  --border-glow:  rgba(139, 92, 246, 0.35);
-  --text-primary: #e8eaf6;
-  --text-secondary: #94a3b8;
-  --text-muted:   #4a5568;
-  --text-accent:  #a78bfa;
-  --accent-1:     #7c3aed;
-  --accent-2:     #a855f7;
-  --accent-teal:  #06b6d4;
-}
 
 /* ── Base ───────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
