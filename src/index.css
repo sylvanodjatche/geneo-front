@@ -429,3 +429,9 @@ body::after {
 /* Dark mode overrides (legacy compat) */
 .dark body { background: var(--bg-void); color: var(--text-primary); }
 
+/* Cacher les liens de navigation sur mobile */
+@media (max-width: 768px) {
+  .desktop-nav {
+    display: none !important;
+  }
+}

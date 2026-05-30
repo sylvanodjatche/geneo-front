@@ -71,8 +71,8 @@ function App() {
               <GENEoLogo size={28} showText={true} />
             </NavLink>
 
-            {/* Desktop navigation – cachée sur mobile */}
-            <div style={{ display: 'flex', gap: 32, alignItems: 'center', flex: 1 }} className="hidden md:flex">
+            {/* Desktop navigation – masquée sur mobile via la classe CSS .desktop-nav */}
+            <div className="desktop-nav" style={{ display: 'flex', gap: 32, alignItems: 'center', flex: 1 }}>
               {navLinks.map(({ to, label }) => (
                 <NavLink
                   key={to}
