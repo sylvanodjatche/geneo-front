@@ -1,41 +1,40 @@
+// src/utils/parseCsv.js
+
 import Papa from 'papaparse';
 
-export const parseCsvFile = (file) => {
+/**
+ * Parse a CSV File and return array of { id, sequence }
+ */
+export function parseCsvFile(file) {
   return new Promise((resolve, reject) => {
     Papa.parse(file, {
-      header: true,       // la première ligne contient les noms de colonnes
+      header: true,
       skipEmptyLines: true,
       complete: (results) => {
-        const data = results.data;
-        // On suppose que les colonnes s'appellent "id" (ou "protein_id") et "sequence"
-        // Si pas d'en-tête, on prend la première colonne comme séquence et on génère un id
-        if (data.length === 0) {
-          reject(new Error("Le fichier est vide"));
+        const { data } = results;
+        if (!data || data.length === 0) {
+          reject(new Error('Fichier CSV vide.'));
           return;
         }
-        // Détection automatique des colonnes
-        const firstRow = data[0];
-        let idKey = null;
-        let seqKey = null;
-        if (firstRow.hasOwnProperty('id')) idKey = 'id';
-        else if (firstRow.hasOwnProperty('protein_id')) idKey = 'protein_id';
-        if (firstRow.hasOwnProperty('sequence')) seqKey = 'sequence';
-        else if (firstRow.hasOwnProperty('seq')) seqKey = 'seq';
+        // Accept columns: sequence / Sequence / SEQUENCE + optional id/ID
+        const seqKey = Object.keys(data[0]).find(k => k.toLowerCase() === 'sequence');
+        const idKey  = Object.keys(data[0]).find(k => k.toLowerCase() === 'id' || k.toLowerCase() === 'protein_id');
 
         if (!seqKey) {
-          // Si pas de colonne identifiée, on prend la première colonne comme séquence
-          const firstCol = Object.keys(firstRow)[0];
-          seqKey = firstCol;
-          idKey = null; // on générera des ids automatiquement
+          reject(new Error("Colonne 'sequence' introuvable dans le CSV."));
+          return;
         }
 
-        const sequences = data.map((row, idx) => ({
-          id: idKey ? row[idKey] : `prot_${idx+1}`,
-          sequence: row[seqKey].replace(/\s/g, '').toUpperCase()
-        })).filter(item => item.sequence.length > 0);
+        const sequences = data
+          .map((row, i) => ({
+            id: idKey ? row[idKey] : `protein_${i + 1}`,
+            sequence: (row[seqKey] || '').trim().toUpperCase().replace(/[^A-Z]/g, ''),
+          }))
+          .filter(s => s.sequence.length > 0);
+
         resolve(sequences);
       },
-      error: (error) => reject(error)
+      error: (err) => reject(new Error(err.message)),
     });
   });
-};
+}

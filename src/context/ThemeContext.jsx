@@ -1,4 +1,5 @@
-//src/context/ThemeContext.jsx
+// src/context/ThemeContext.jsx
+
 import { createContext, useState, useContext, useEffect } from 'react';
 
 const ThemeContext = createContext();
@@ -6,7 +7,8 @@ const ThemeContext = createContext();
 export function ThemeProvider({ children }) {
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('theme');
-    return saved === 'dark';
+    if (saved) return saved === 'dark';
+    return true;   // Force le mode sombre par défaut
   });
 
   useEffect(() => {

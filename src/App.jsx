@@ -1,34 +1,190 @@
 // src/App.jsx
 
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import Home from './pages/Home';
 import About from './pages/About';
 import History from './pages/History';
+import Admin from './pages/Admin';
 import { useTheme } from './context/ThemeContext';
+import { GENEoLogo } from './components/Logo';
 import './index.css';
 
 function App() {
   const { darkMode, setDarkMode } = useTheme();
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const navLinks = [
+    { to: '/',        label: 'Analyse' },
+    { to: '/history', label: 'Historique' },
+    { to: '/admin',   label: 'Dashboard' },
+    { to: '/about',   label: 'À propos' },
+  ];
 
   return (
     <Router>
-      <div className="app-container">
-        <nav className="bg-gray-800 p-4 rounded-lg mb-6 shadow-md flex items-center">
-          <Link to="/" className="text-white mr-6 hover:text-gray-300 transition">Accueil</Link>
-          <Link to="/history" className="text-white mr-6 hover:text-gray-300 transition">Historique</Link>
-          <Link to="/about" className="text-white mr-6 hover:text-gray-300 transition">À propos</Link>
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className="ml-auto text-white bg-gray-700 px-3 py-1 rounded-lg hover:bg-gray-600 transition"
-          >
-            {darkMode ? '☀️ Clair' : '🌙 Sombre'}
-          </button>
+      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+
+        {/* ── Ambient top glow ───────────────────────────────── */}
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, height: '1px',
+          background: 'linear-gradient(90deg, transparent, #7c3aed, #06b6d4, #7c3aed, transparent)',
+          zIndex: 100, opacity: scrolled ? 1 : 0, transition: 'opacity 0.4s',
+        }} />
+
+        {/* ── Navbar ─────────────────────────────────────────── */}
+        <nav style={{
+          position: 'sticky', top: 0, zIndex: 99,
+          background: scrolled
+            ? 'rgba(5,7,15,0.92)'
+            : 'rgba(5,7,15,0.6)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderBottom: `1px solid ${scrolled ? 'rgba(99,130,255,0.18)' : 'transparent'}`,
+          transition: 'all 0.4s ease',
+          padding: '0 24px',
+        }}>
+          <div style={{
+            maxWidth: 1200, margin: '0 auto',
+            display: 'flex', alignItems: 'center',
+            height: 64, gap: 40,
+          }}>
+            {/* Logo */}
+            <NavLink to="/" style={{ textDecoration: 'none' }}>
+              <GENEoLogo size={28} showText={true} />
+            </NavLink>
+
+            {/* Desktop nav */}
+            <div style={{ display: 'flex', gap: 32, alignItems: 'center', flex: 1 }}
+                 className="hidden md:flex">
+              {navLinks.map(({ to, label }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  end={to === '/'}
+                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                  style={{ textDecoration: 'none' }}
+                >
+                  {label}
+                </NavLink>
+              ))}
+            </div>
+
+            {/* Right actions */}
+            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12 }}>
+              {/* Theme toggle */}
+              <button
+                onClick={() => setDarkMode(!darkMode)}
+                style={{
+                  width: 36, height: 36,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: 'rgba(99,130,255,0.08)',
+                  border: '1px solid rgba(99,130,255,0.15)',
+                  borderRadius: 8, cursor: 'pointer',
+                  color: 'var(--text-secondary)', fontSize: 16,
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.4)'}
+                onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(99,130,255,0.15)'}
+                title={darkMode ? 'Mode clair' : 'Mode sombre'}
+              >
+                {darkMode ? '☀' : '◑'}
+              </button>
+
+              {/* API status dot */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6,
+                            padding: '5px 12px',
+                            background: 'rgba(16,185,129,0.08)',
+                            border: '1px solid rgba(16,185,129,0.2)',
+                            borderRadius: 20 }}>
+                <span style={{
+                  width: 6, height: 6, borderRadius: '50%',
+                  background: '#10b981',
+                  boxShadow: '0 0 8px #10b981',
+                  animation: 'pulse-glow 2s infinite',
+                }} />
+                <span style={{ fontFamily: 'Space Mono', fontSize: '0.68rem', color: '#34d399', letterSpacing: '0.05em' }}>
+                  API LIVE
+                </span>
+              </div>
+
+              {/* Mobile hamburger */}
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                style={{
+                  display: 'none', width: 36, height: 36,
+                  alignItems: 'center', justifyContent: 'center',
+                  background: 'transparent', border: '1px solid var(--border)',
+                  borderRadius: 8, cursor: 'pointer', color: 'var(--text-primary)',
+                  fontSize: 18,
+                }}
+                className="flex md:hidden"
+              >
+                {menuOpen ? '✕' : '☰'}
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile menu */}
+          {menuOpen && (
+            <div style={{
+              borderTop: '1px solid var(--border)',
+              padding: '16px 0',
+              display: 'flex', flexDirection: 'column', gap: 4,
+            }}>
+              {navLinks.map(({ to, label }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  end={to === '/'}
+                  onClick={() => setMenuOpen(false)}
+                  style={{ textDecoration: 'none' }}
+                  className={({ isActive }) =>
+                    `nav-link ${isActive ? 'active' : ''}`
+                  }
+                >
+                  <div style={{ padding: '10px 16px', borderRadius: 8 }}>{label}</div>
+                </NavLink>
+              ))}
+            </div>
+          )}
         </nav>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/about" element={<About />} />
-        </Routes>
+
+        {/* ── Page content ───────────────────────────────────── */}
+        <main style={{ flex: 1, padding: '40px 24px' }}>
+          <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+            <Routes>
+              <Route path="/"        element={<Home />} />
+              <Route path="/history" element={<History />} />
+              <Route path="/admin"   element={<Admin />} />
+              <Route path="/about"   element={<About />} />
+            </Routes>
+          </div>
+        </main>
+
+        {/* ── Footer ─────────────────────────────────────────── */}
+        <footer style={{
+          borderTop: '1px solid var(--border)',
+          padding: '20px 24px',
+          textAlign: 'center',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
+            <GENEoLogo size={18} showText={false} />
+            <span style={{ fontFamily: 'Space Mono', fontSize: '0.72rem', color: 'var(--text-muted)', letterSpacing: '0.08em' }}>
+              © 2026 · GENEo · GOUJOU · DJATCHE · TAGNE · Université de Yaoundé I
+            </span>
+            <span style={{ fontFamily: 'Space Mono', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+              CAFA-6 · ESM-2 + GCN
+            </span>
+          </div>
+        </footer>
       </div>
     </Router>
   );
