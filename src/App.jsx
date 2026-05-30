@@ -11,6 +11,31 @@ import './index.css';
 function App() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [apiStatus, setApiStatus] = useState('loading'); // 'loading', 'ok', 'error'
+
+  // Vérification de l'état de l'API
+  const checkApiHealth = async () => {
+    try {
+      const response = await fetch('https://sylvanod-geneo-inference.hf.space/health', {
+        method: 'GET',
+        signal: AbortSignal.timeout(5000) // timeout 5 secondes
+      });
+      if (response.ok) {
+        setApiStatus('ok');
+      } else {
+        setApiStatus('error');
+      }
+    } catch (error) {
+      console.error('API health check failed:', error);
+      setApiStatus('error');
+    }
+  };
+
+  useEffect(() => {
+    checkApiHealth(); // premier check immédiat
+    const interval = setInterval(checkApiHealth, 30000); // toutes les 30 secondes
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -91,18 +116,18 @@ function App() {
               <div style={{
                 display: 'flex', alignItems: 'center', gap: 6,
                 padding: '5px 12px',
-                background: 'rgba(16,185,129,0.08)',
-                border: '1px solid rgba(16,185,129,0.2)',
+                background: apiStatus === 'ok' ? 'rgba(16,185,129,0.08)' : (apiStatus === 'error' ? 'rgba(239,68,68,0.08)' : 'rgba(245,158,11,0.08)'),
+                border: `1px solid ${apiStatus === 'ok' ? 'rgba(16,185,129,0.2)' : (apiStatus === 'error' ? 'rgba(239,68,68,0.3)' : 'rgba(245,158,11,0.3)')}`,
                 borderRadius: 20
               }}>
                 <span style={{
                   width: 6, height: 6, borderRadius: '50%',
-                  background: '#10b981',
-                  boxShadow: '0 0 8px #10b981',
-                  animation: 'pulse-glow 2s infinite',
+                  background: apiStatus === 'ok' ? '#10b981' : (apiStatus === 'error' ? '#ef4444' : '#f59e0b'),
+                  boxShadow: apiStatus === 'ok' ? '0 0 8px #10b981' : 'none',
+                  animation: apiStatus === 'ok' ? 'pulse-glow 2s infinite' : 'none',
                 }} />
-                <span style={{ fontFamily: 'Space Mono', fontSize: '0.68rem', color: '#34d399', letterSpacing: '0.05em' }}>
-                  API LIVE
+                <span style={{ fontFamily: 'Space Mono', fontSize: '0.68rem', color: apiStatus === 'ok' ? '#34d399' : (apiStatus === 'error' ? '#fca5a5' : '#fbbf24'), letterSpacing: '0.05em' }}>
+                  API
                 </span>
               </div>
             </div>
@@ -152,7 +177,7 @@ function App() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
             <GENEoLogo size={18} showText={false} />
             <span style={{ fontFamily: 'Space Mono', fontSize: '0.72rem', color: 'var(--text-muted)', letterSpacing: '0.08em' }}>
-              © 2026 · GENEo · GOUJOU · DJATCHE · TAGNE · Université de Yaoundé I
+              © 2026 · GENEo · DJATCHE · GOUJOU · TAGNE · Université de Yaoundé I
             </span>
             <span style={{ fontFamily: 'Space Mono', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
               CAFA-6 · ESM-2 + GCN
