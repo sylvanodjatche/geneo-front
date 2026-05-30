@@ -49,13 +49,29 @@ function App() {
           <div style={{
             maxWidth: 1200, margin: '0 auto',
             display: 'flex', alignItems: 'center',
-            height: 64, gap: 20,
+            height: 64, gap: 16,
           }}>
+            {/* Burger button – à gauche, visible uniquement sur mobile */}
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              style={{
+                width: 36, height: 36,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: 'transparent', border: '1px solid var(--border)',
+                borderRadius: 8, cursor: 'pointer', color: 'var(--text-primary)',
+                fontSize: 20,
+              }}
+              className="flex md:hidden"
+            >
+              {menuOpen ? '✕' : '☰'}
+            </button>
+
+            {/* Logo */}
             <NavLink to="/" style={{ textDecoration: 'none' }}>
               <GENEoLogo size={28} showText={true} />
             </NavLink>
 
-            {/* Desktop navigation (cachée sur mobile) */}
+            {/* Desktop navigation – cachée sur mobile */}
             <div style={{ display: 'flex', gap: 32, alignItems: 'center', flex: 1 }} className="hidden md:flex">
               {navLinks.map(({ to, label }) => (
                 <NavLink
@@ -70,9 +86,8 @@ function App() {
               ))}
             </div>
 
-            {/* Right actions */}
+            {/* Right actions : API status (toujours à droite) */}
             <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12 }}>
-              {/* API status dot */}
               <div style={{
                 display: 'flex', alignItems: 'center', gap: 6,
                 padding: '5px 12px',
@@ -90,25 +105,10 @@ function App() {
                   API LIVE
                 </span>
               </div>
-
-              {/* Mobile hamburger button */}
-              <button
-                onClick={() => setMenuOpen(!menuOpen)}
-                style={{
-                  width: 36, height: 36,
-                  alignItems: 'center', justifyContent: 'center',
-                  background: 'transparent', border: '1px solid var(--border)',
-                  borderRadius: 8, cursor: 'pointer', color: 'var(--text-primary)',
-                  fontSize: 20,
-                }}
-                className="flex md:hidden"
-              >
-                {menuOpen ? '✕' : '☰'}
-              </button>
             </div>
           </div>
 
-          {/* Mobile menu (dropdown) */}
+          {/* Mobile menu (dropdown) – s’ouvre quand burger est cliqué */}
           {menuOpen && (
             <div style={{
               borderTop: '1px solid var(--border)',
