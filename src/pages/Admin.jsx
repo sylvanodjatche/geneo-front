@@ -1,5 +1,4 @@
 // src/pages/Admin.jsx
-
 import { useMemo } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -69,17 +68,21 @@ export default function Admin() {
       .filter(([, v]) => v > 0)
       .map(([ns, count]) => ({ name: ns, value: count, color: NS_COLORS[ns] }));
 
-    // Activity by day (last 14 days)
-    const dayMap = {};
+    // Activity by day (last 14 days) – CORRECTION ICI
+    const dayMap = {}; // clé = YYYY-MM-DD, valeur = { count, displayDate }
     history.forEach(e => {
-      const day = new Date(e.timestamp).toLocaleDateString('fr-FR', { month: 'short', day: '2-digit' });
-      dayMap[day] = (dayMap[day] || 0) + 1;
+      const d = new Date(e.timestamp);
+      const isoKey = d.toISOString().split('T')[0]; // "2026-05-30"
+      const displayDate = d.toLocaleDateString('fr-FR', { month: 'short', day: '2-digit' });
+      if (!dayMap[isoKey]) {
+        dayMap[isoKey] = { count: 0, displayDate };
+      }
+      dayMap[isoKey].count++;
     });
-    // Sort by date
     const activityData = Object.entries(dayMap)
-      .sort((a, b) => new Date(a[0]) - new Date(b[0]))
+      .sort((a, b) => a[0].localeCompare(b[0])) // tri chronologique sur la clé ISO
       .slice(-14)
-      .map(([date, count]) => ({ date, count }));
+      .map(([iso, { count, displayDate }]) => ({ date: displayDate, count }));
 
     // Most frequent GO terms
     const termFreq = {};
