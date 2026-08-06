@@ -143,8 +143,7 @@ To run the frontend interface locally:
 This project was developed as part of the Master's Degree program in Data Science at the University of Yaoundé I (Academic Year 2025–2026), under the Course UE 4258.
 
 **Authors:**
-* Sylvano DJATCHE NKAMGANG (Matricule: 22W2163) — Lead Engineer & Project Maintainer
-* Zidane GOUJOU GUIMATSA (Matricule: 21T2899)
+* Sylvano DJATCHE NKAMGANG (Matricule: 22W2163) 
 * Idriss Chanel TAGNE TALLA (Matricule: 19M2351)
 
 **Supervised by:** Pr. Norbert TSOPZE, Associate Professor, Department of Computer Science, University of Yaoundé I.
