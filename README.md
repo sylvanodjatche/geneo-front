@@ -145,6 +145,7 @@ This project was developed as part of the Master's Degree program in Data Scienc
 **Authors:**
 * Sylvano DJATCHE NKAMGANG (Matricule: 22W2163) 
 * Idriss Chanel TAGNE TALLA (Matricule: 19M2351)
+* Zidane GOUJOU GUIMATSA (Matricule: 21T2899)
 
 **Supervised by:** Pr. Norbert TSOPZE, Associate Professor, Department of Computer Science, University of Yaoundé I.
 
